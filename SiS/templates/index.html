@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulation Portal</title>
+    <script>
+        function toggleInputs() {
+            const simulation = document.getElementById("simulation").value;
+            const diodeInputs = document.getElementById("diode-inputs");
+            const diodeResistorInputs = document.getElementById("diode-resistor-inputs");
+            const numericalMethodsInputs = document.getElementById("numerical-methods-inputs");
+
+            diodeInputs.style.display = simulation === "diode" ? "block" : "none";
+            diodeResistorInputs.style.display = simulation === "diode_resistor" ? "block" : "none";
+            numericalMethodsInputs.style.display = simulation === "numerical_methods" ? "block" : "none";
+        }
+
+        function toggleNumericalMethodInputs() {
+            const method = document.getElementById("method").value;
+
+            // Hide all numerical method inputs
+            document.getElementById("numerical-dc-inputs").style.display = "none";
+            document.getElementById("numerical-step-inputs").style.display = "none";
+            document.getElementById("numerical-impulse-inputs").style.display = "none";
+            document.getElementById("numerical-delayed-impulse-inputs").style.display = "none";
+            document.getElementById("numerical-ramp-inputs").style.display = "none";
+
+            // Show relevant inputs
+            if (method === "dc") {
+                document.getElementById("numerical-dc-inputs").style.display = "block";
+            } else if (method === "step") {
+                document.getElementById("numerical-step-inputs").style.display = "block";
+            } else if (method === "impulse") {
+                document.getElementById("numerical-impulse-inputs").style.display = "block";
+            } else if (method === "delayed_impulse") {
+                document.getElementById("numerical-delayed-impulse-inputs").style.display = "block";
+            } else if (method === "ramp") {
+                document.getElementById("numerical-ramp-inputs").style.display = "block";
+            }
+        }
+    </script>
+</head>
+<body>
+<h1>Simulation Portal</h1>
+<form method="POST">
+    <label for="simulation">Choose Simulation:</label>
+    <select id="simulation" name="simulation" onchange="toggleInputs()">
+        <option value="diode">Diode Simulation</option>
+        <option value="diode_resistor">Diode + Resistor Simulation</option>
+        <option value="scaling">Scaling Analysis</option>
+        <option value="frequency_wavelength">Frequency vs. Wavelength</option>
+        <option value="delay_frequency">Delay vs. Frequency</option>
+        <option value="harmonics">Harmonic Analysis</option>
+        <option value="numerical_methods">Numerical Methods for Differential Equations</option>
+    </select><br><br>
+
+    <!-- Diode Simulation Inputs -->
+    <div id="diode-inputs" style="display: none;">
+        <label for="ID_target">Target Current (ID):</label>
+        <input type="number" id="ID_target" name="ID_target" step="0.000001" placeholder="e.g., 0.001"><br><br>
+    </div>
+
+    <!-- Diode + Resistor Simulation Inputs -->
+    <div id="diode-resistor-inputs" style="display: none;">
+        <label for="VS">Source Voltage (VS):</label>
+        <input type="number" id="VS" name="VS" step="0.01" placeholder="e.g., 5.0"><br><br>
+
+        <label for="R">Resistor Value (R):</label>
+        <input type="number" id="R" name="R" step="1" placeholder="e.g., 1000"><br><br>
+    </div>
+
+    <!-- Numerical Methods Inputs -->
+    <div id="numerical-methods-inputs" style="display: none;">
+        <label for="method">Select Input Type:</label>
+        <select id="method" name="method" onchange="toggleNumericalMethodInputs()">
+            <option value="dc">DC Input</option>
+            <option value="step">Step Input</option>
+            <option value="impulse">Impulse Input</option>
+            <option value="delayed_impulse">Delayed Impulse Input</option>
+            <option value="ramp">Ramp Input</option>
+        </select><br><br>
+
+        <!-- Additional inputs for DC -->
+        <div id="numerical-dc-inputs" style="display: none;">
+            <label for="dc_voltage">Voltage (V):</label>
+            <input type="number" id="dc_voltage" name="dc_voltage" step="0.1" placeholder="e.g., 5"><br><br>
+        </div>
+
+        <div id="numerical-step-inputs" style="display: none;">
+            <label for="step_v_initial">Initial Voltage (V):</label>
+            <input type="number" id="step_v_initial" name="v_initial" step="0.1" placeholder="e.g., 0"><br><br>
+            <label for="step_v_final">Final Voltage (V):</label>
+            <input type="number" id="step_v_final" name="v_final" step="0.1" placeholder="e.g., 5"><br><br>
+            <label for="step_t_step">Step Time (s):</label>
+            <input type="number" id="step_t_step" name="t_step" step="0.001" placeholder="e.g., 0.005"><br><br>
+        </div>
+
+        <div id="numerical-impulse-inputs" style="display: none;">
+            <label for="impulse_t_pulse">Pulse Duration (s):</label>
+            <input type="number" id="impulse_t_pulse" name="t_pulse" step="0.0001" placeholder="e.g., 0.0001"><br><br>
+            <label for="impulse_v_impulse">Impulse Height (V):</label>
+            <input type="number" id="impulse_v_impulse" name="v_impulse" step="0.1" placeholder="e.g., 10"><br><br>
+        </div>
+
+        <div id="numerical-delayed-impulse-inputs" style="display: none;">
+            <label for="delayed_t_start">Start Time (s):</label>
+            <input type="number" id="delayed_t_start" name="t_start" step="0.001" placeholder="e.g., 0.002"><br><br>
+            <label for="delayed_t_pulse">Pulse Duration (s):</label>
+            <input type="number" id="delayed_t_pulse" name="t_pulse" step="0.0001" placeholder="e.g., 0.0001"><br><br>
+            <label for="delayed_v_impulse">Impulse Height (V):</label>
+            <input type="number" id="delayed_v_impulse" name="v_impulse" step="0.1" placeholder="e.g., 10"><br><br>
+        </div>
+
+        <div id="numerical-ramp-inputs" style="display: none;">
+            <label for="ramp_t_start">Start Time (s):</label>
+            <input type="number" id="ramp_t_start" name="t_start" step="0.001" placeholder="e.g., 0.002"><br><br>
+            <label for="ramp_slope">Slope (V/s):</label>
+            <input type="number" id="ramp_slope" name="slope" step="1" placeholder="e.g., 1000"><br><br>
+        </div>
+
+
+    </div>
+
+    <button type="submit">Simulate</button>
+</form>
+
+{% if result %}
+<h2>Result:</h2>
+<p>{{ result }}</p>
+{% endif %}
+
+{% if graph %}
+<h2>Graph:</h2>
+<img src="data:image/png;base64,{{ graph }}" alt="Simulation Graph">
+{% endif %}
+</body>
+</html>
