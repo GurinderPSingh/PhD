@@ -3,6 +3,7 @@ import subprocess
 import speech_recognition as sr
 from pydub import AudioSegment
 from pydub.silence import detect_nonsilent
+import whisper
 import tkinter as tk
 from tkinter import filedialog
 
@@ -47,24 +48,18 @@ def process_lecture(video_path, output_dir):
         else:
             print(f"Skipping blank chunk_{idx}.wav")
 
-    # Step 3: Transcribe each chunk
-    print("Transcribing audio...")
-    recognizer = sr.Recognizer()
-
-    # Sort files numerically based on the chunk index
-    chunk_files.sort(key=lambda x: int(os.path.basename(x).split("_")[1].split(".")[0]))
+    # Step 3: Transcribe each chunk using Whisper
+    print("Transcribing audio with Whisper...")
+    model = whisper.load_model("base")  # Use "small", "medium", or "large" as needed.
 
     with open(transcription_path, "w") as f:
         for chunk_file in chunk_files:
-            print(f"Transcribing {os.path.basename(chunk_file)}...")
+            print(f"Transcribing {os.path.basename(chunk_file)} with Whisper...")
             try:
-                with sr.AudioFile(chunk_file) as source:
-                    recognizer.adjust_for_ambient_noise(source)
-                    audio_content = recognizer.record(source)
-                    transcription = recognizer.recognize_google(audio_content)
-                    f.write(transcription + "\n")
+                result = model.transcribe(chunk_file)
+                f.write(result["text"] + "\n")
             except Exception as e:
-                print(f"Error during transcription of {os.path.basename(chunk_file)}: {e}")
+                print(f"Error during Whisper transcription of {os.path.basename(chunk_file)}: {e}")
 
     print(f"Transcription saved as: {transcription_path}")
 
