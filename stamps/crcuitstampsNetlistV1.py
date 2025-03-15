@@ -134,13 +134,23 @@ def solve_mna_for_frequency(f, G, C, RHS):
     n = G_sC.shape[0]
     flops = (2 / 3) * n**3 + 2 * n**2  # FLOPs estimation
 
+    # Check singularity and rank
+    rank = np.linalg.matrix_rank(G_sC)
+    if rank < G_sC.shape[0]:
+        print(f"Singular matrix at frequency {f:.2f} Hz")
+        print(f"Matrix Rank: {rank}, Matrix Size: {G_sC.shape}")
+        print("G+sC Matrix:\n", G_sC)
+        return f, G_sC, None, flops, 0  # Return None for the solution
+
     try:
         start_time = time.perf_counter()
         X = np.linalg.solve(G_sC, RHS)
         solve_time = time.perf_counter() - start_time
         return f, G_sC, X, flops, solve_time
-    except np.linalg.LinAlgError:
-        return f, G_sC, None, flops, 0  # None for failed solutions
+    except np.linalg.LinAlgError as e:
+        print(f"Error at frequency {f:.2f} Hz: {e}")
+        return f, G_sC, None, flops, 0  # Return None for the solution
+
 
 def solve_frequency_wrapper(args):
     """
@@ -240,32 +250,51 @@ def construct_circuit(elements, num_nodes):
 
 
 if __name__ == "__main__":
-    num_nodes = 4
-    unknowns = [f"V_{i+1}" for i in range(num_nodes)]
-    G = np.zeros((num_nodes, num_nodes), dtype=np.complex128)
-    C = np.zeros((num_nodes, num_nodes), dtype=np.complex128)
-    RHS = np.zeros(num_nodes, dtype=np.complex128)
+    # Netlist directory and file selection
+    netlist_directory = "E:\\PHDRepo\\stamps"
+    netlist_file = os.path.join(netlist_directory, "circuit.netlist")
 
-    # Frequency range setup
-    f_min = 1e-3
-    f_max = 1e9  # 1 GHz
-    num_points = int(1e6)  # 1000 points for testing
+    # Parse the netlist
+    elements, num_nodes = parse_netlist(netlist_file)
+
+    # Construct the circuit
+    G, C, RHS, unknowns = construct_circuit(elements, num_nodes)
+
+    # Frequency sweep setup
+    f_min = 1e-3  # Start frequency: 1 mHz
+    f_max = 1e6  # End frequency: 1 GHz
+    num_points =  int(1e3)  # 100000 points for testing
     frequencies = np.linspace(f_min, f_max, num_points)
+    print("Conductance Matrix (G):")
+    print(G)
 
-    # Adding components
-    G = CircuitStamps.conductance_stamp(G, 1, 2, 10)
-    C = CircuitStamps.capacitance_stamp(C, 2, 3, 5e-6)
-    G, C, RHS = CircuitStamps.inductor_stamp(G, C, RHS, 3, 4, 1, num_nodes)
-    unknowns.append("I_L1")
-    G, C, RHS = CircuitStamps.voltage_source_stamp(G, C, RHS, 1, 0, 2, num_nodes + 1)
-    unknowns.append("I_VS1")
-    RHS = CircuitStamps.current_source_stamp(RHS, 1, 0, 0.01)
-    G, C, RHS = CircuitStamps.vcvs_stamp(G, C, RHS, 1, 2, 3, 4, 2, num_nodes + 2)
-    unknowns.append("I_VCVS1")
-    G, C, RHS = CircuitStamps.ccvs_stamp(G, C, RHS, 1, 2, num_nodes + 2, 1.2, num_nodes + 3)
-    unknowns.append("I_CCVS1")
+    print("\nCapacitance Matrix (C):")
+    print(C)
 
-    # Use multiprocessing for the frequency sweep
+    print("\nRight-Hand Side Vector (RHS):")
+    print(RHS)
+
+    # Additional debug printouts to check the impact of inductor
+    print("\nMatrix Size after adding inductor:")
+    print(f"Conductance Matrix dimensions: {G.shape}")
+    print(f"RHS Vector length: {len(RHS)}")
+
+    # Format MNA for better readability
+    formatted_G = format_matrix_for_pdf(G)
+    formatted_C = format_matrix_for_pdf(C)
+    formatted_RHS = " ".join(f"{val.real:.2f}+{val.imag:.2f}j" for val in RHS)
+
+    # Save MNA system to PDF
+    output_text = "Conductance Matrix (G):\n" + formatted_G + "\n\nCapacitance Matrix (C):\n"+ formatted_C+"\n\nRight-Hand Side Vector (RHS):\n" + formatted_RHS
+    pdf2 = FPDF()
+    pdf2.add_page()
+    pdf2.set_font("Arial", size=12)
+
+    for line in output_text.split('\n'):
+        pdf2.cell(0, 10, txt=line, ln=True)
+
+    pdf2.output("MNA_system.pdf")
+    # Solve the circuit using multiprocessing
     args = [(f, G, C, RHS) for f in frequencies]
     with Pool(processes=cpu_count()) as pool:
         results = list(tqdm(pool.imap(solve_frequency_wrapper, args), total=num_points, desc="Frequency Sweep"))
@@ -295,7 +324,7 @@ if __name__ == "__main__":
             pdf.cell(0, 10, txt=" ".join(f"{val.real:.2f}+{val.imag:.2f}j" for val in RHS), ln=True)
 
         # Save selected points to PDF
-        if idx % (num_points // 100) == 0:
+        if idx % (num_points // 100) == 0:  # Save approximately 100 points
             pdf.cell(0, 10, txt=f"Frequency: {f:.2f} Hz", ln=True)
             pdf.cell(0, 10, txt=f"FLOPs: {flops:.0f}, Solve Time: {solve_time:.6f} seconds", ln=True)
             if X is not None:
@@ -311,33 +340,23 @@ if __name__ == "__main__":
     print(f"Total Simulation Time: {total_time:.2f} seconds")
     print(f"Total FLOPs: {total_flops:.0f}")
 
+    # Handle invalid solutions
+    print("\nProcessing solutions...")
+    valid_solutions = []
+    for idx, sol in enumerate(solutions):
+        if sol is None:
+            print(f"Skipping frequency index {idx} due to solver failure.")
+            continue
+        valid_solutions.append(sol)  # Append only valid solutions
 
-    # Plot results for all nodes
-
-    # Example: Frequency points and simulated solutions
-    # Save magnitude and phase plots to a single PDF
-    with PdfPages("Frequency_Response_Plots.pdf") as pdf:
+    # Plot results for all nodes and save to a PDF
+    with PdfPages("Frequency_Response_Plots.pdf") as pdf_pages:
         for i, name in enumerate(unknowns):
-            # Extract magnitudes for the current node across all frequencies
-            print(f"Type of solutions: {type(solutions)}")
-            print(f"Length of solutions: {len(solutions)}")  # Number of nodes
-            print(f"Shape of first solution: {solutions[0].shape}")  # Should match len(frequencies)
-
-
-            print(f"Extracting magnitudes for node {name}")
-            print(f"Extracting Phase for node {name}")
-
+            # Extract magnitudes and phases for the current node
             magnitudes = [np.abs(sol[i]) if sol is not None else 0 for sol in solutions]
-
-            # Extract phases for the current node across all frequencies
             phases = [np.angle(sol[i], deg=True) if sol is not None else 0 for sol in solutions]
 
-            # Ensure lengths match before plotting
-            if len(frequencies) != len(magnitudes) or len(frequencies) != len(phases):
-                print(f"Mismatch: frequencies={len(frequencies)}, magnitudes={len(magnitudes)}, phases={len(phases)}")
-                raise ValueError("Mismatch in dimensions of frequencies and solutions.")
-
-            # Generate the magnitude plot
+            # Generate magnitude plot
             plt.figure(figsize=(10, 6))
             plt.semilogx(frequencies, magnitudes, label=f"Magnitude of {name}")
             plt.title(f"Frequency Response (Magnitude) of {name}")
@@ -345,10 +364,10 @@ if __name__ == "__main__":
             plt.ylabel("Voltage Magnitude")
             plt.grid(which='both', linestyle='--', linewidth=0.5)
             plt.legend()
-            pdf.savefig()  # Save the magnitude plot to the PDF
+            pdf_pages.savefig()
             plt.close()
 
-            # Generate the phase plot
+            # Generate phase plot
             plt.figure(figsize=(10, 6))
             plt.semilogx(frequencies, phases, label=f"Phase of {name}")
             plt.title(f"Frequency Response (Phase) of {name}")
@@ -356,7 +375,8 @@ if __name__ == "__main__":
             plt.ylabel("Phase (Degrees)")
             plt.grid(which='both', linestyle='--', linewidth=0.5)
             plt.legend()
-            pdf.savefig()  # Save the phase plot to the PDF
+            pdf_pages.savefig()
             plt.close()
 
-            print("All plots (magnitude and phase) have been saved to 'Frequency_Response_Plots.pdf'")
+    print("All plots (magnitude and phase) have been saved to 'Frequency_Response_Plots.pdf'")
+
