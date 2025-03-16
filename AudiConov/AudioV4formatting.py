@@ -227,7 +227,7 @@ punjabi_radio.pack(side=tk.LEFT, padx=10, pady=5)
 
 # Option to format transcript using ChatGPT.
 organize_var = tk.BooleanVar(value=False)
-organize_check = tk.Checkbutton(root, text="Organize Transcript (Format with ChatGPT)", variable=organize_var)
+organize_check = tk.Checkbutton(root, text="Organize Transcript (Format with open AI)", variable=organize_var)
 organize_check.pack(pady=5)
 
 # File List Frame (for file names and progress bars)

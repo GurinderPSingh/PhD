@@ -4,8 +4,9 @@
     <exclude-output />
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/.venv" />
+      <excludeFolder url="file://$MODULE_DIR$/.venv1" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 3.10 (AudiConov)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 3.10 (AudiConov) (3)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Python 3.10 (.venv) interpreter library" level="application" />
   </component>
