@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    
+        <script>
+            L_NO_TOUCH = false;
+            L_DISABLE_3D = false;
+        </script>
+    
+    <style>html, body {width: 100%;height: 100%;margin: 0;padding: 0;}</style>
+    <style>#map {position:absolute;top:0;bottom:0;right:0;left:0;}</style>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_f66145439278e87f2c82655661370151 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+        
+</head>
+<body>
+    
+    
+            <div class="folium-map" id="map_f66145439278e87f2c82655661370151" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_f66145439278e87f2c82655661370151 = L.map(
+                "map_f66145439278e87f2c82655661370151",
+                {
+                    center: [45.2718632, -75.93874371850704],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 16,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_fdb01398ab46def032c9982ea61f2f84 = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 19,
+  "maxNativeZoom": 19,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_fdb01398ab46def032c9982ea61f2f84.addTo(map_f66145439278e87f2c82655661370151);
+        
+    
+            var marker_9465b6a9075e7f86d445bd1fc9a271fb = L.marker(
+                [45.2718632, -75.93874371850704],
+                {
+}
+            ).addTo(map_f66145439278e87f2c82655661370151);
+        
+    
+            var icon_4d20e381b2a20c03fe5a0f43b48e32ae = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_5e3fce7d923322d26d97969e08f731f7 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_c2b70819d2bc93c032827d9f8eb06d69 = $(`<div id="html_c2b70819d2bc93c032827d9f8eb06d69" style="width: 100.0%; height: 100.0%;">Property: 249, Kimpton Drive, Potter's Key, Stittsville, Ottawa, Eastern Ontario, Ontario, K2S 2J3, Canada</div>`)[0];
+                popup_5e3fce7d923322d26d97969e08f731f7.setContent(html_c2b70819d2bc93c032827d9f8eb06d69);
+            
+        
+
+        marker_9465b6a9075e7f86d445bd1fc9a271fb.bindPopup(popup_5e3fce7d923322d26d97969e08f731f7)
+        ;
+
+        
+    
+    
+                marker_9465b6a9075e7f86d445bd1fc9a271fb.setIcon(icon_4d20e381b2a20c03fe5a0f43b48e32ae);
+            
+    
+            var marker_6d1294e83ea3cc4c841732f994c14cf4 = L.marker(
+                [45.272863199999996, -75.93874371850704],
+                {
+}
+            ).addTo(map_f66145439278e87f2c82655661370151);
+        
+    
+            var icon_65bb6398f802fa9684e3e8d8fa0634b1 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "cloud",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_8c01eea4162511a048afa541084d0b81 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_182fdc3f20f2bac9b2801a2ebac9bc42 = $(`<div id="html_182fdc3f20f2bac9b2801a2ebac9bc42" style="width: 100.0%; height: 100.0%;">Weather: Temp: -0.0°C, Wind: 12.6 km/h</div>`)[0];
+                popup_8c01eea4162511a048afa541084d0b81.setContent(html_182fdc3f20f2bac9b2801a2ebac9bc42);
+            
+        
+
+        marker_6d1294e83ea3cc4c841732f994c14cf4.bindPopup(popup_8c01eea4162511a048afa541084d0b81)
+        ;
+
+        
+    
+    
+                marker_6d1294e83ea3cc4c841732f994c14cf4.setIcon(icon_65bb6398f802fa9684e3e8d8fa0634b1);
+            
+    
+            var marker_0843273c7934ceefa60183ee7a8712ad = L.marker(
+                [45.2708632, -75.93874371850704],
+                {
+}
+            ).addTo(map_f66145439278e87f2c82655661370151);
+        
+    
+            var icon_3b9b5153991aaaf2be0ecf6a8917cdba = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_078777cf5ff1415b07359fca5553d475 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_5011e4fb8e2d39d97df5c376d477ed26 = $(`<div id="html_5011e4fb8e2d39d97df5c376d477ed26" style="width: 100.0%; height: 100.0%;"> <iframe width="300" height="200" src="https://www.youtube.com/embed/86YLFOog4GM" frameborder="0" allowfullscreen></iframe> </div>`)[0];
+                popup_078777cf5ff1415b07359fca5553d475.setContent(html_5011e4fb8e2d39d97df5c376d477ed26);
+            
+        
+
+        marker_0843273c7934ceefa60183ee7a8712ad.bindPopup(popup_078777cf5ff1415b07359fca5553d475)
+        ;
+
+        
+    
+    
+                marker_0843273c7934ceefa60183ee7a8712ad.setIcon(icon_3b9b5153991aaaf2be0ecf6a8917cdba);
+            
+</script>
+</html>

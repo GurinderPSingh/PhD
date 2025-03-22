@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    
+        <script>
+            L_NO_TOUCH = false;
+            L_DISABLE_3D = false;
+        </script>
+    
+    <style>html, body {width: 100%;height: 100%;margin: 0;padding: 0;}</style>
+    <style>#map {position:absolute;top:0;bottom:0;right:0;left:0;}</style>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_39dd3641973b0ff6f81f226394af9889 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+        
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/leaflet.markercluster.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/MarkerCluster.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/MarkerCluster.Default.css"/>
+</head>
+<body>
+    
+    
+            <div class="folium-map" id="map_39dd3641973b0ff6f81f226394af9889" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_39dd3641973b0ff6f81f226394af9889 = L.map(
+                "map_39dd3641973b0ff6f81f226394af9889",
+                {
+                    center: [45.35540055, -75.92789443706141],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 13,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_793d8cae8804ef4e816b799f218fb649 = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 19,
+  "maxNativeZoom": 19,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_793d8cae8804ef4e816b799f218fb649.addTo(map_39dd3641973b0ff6f81f226394af9889);
+        
+    
+            var marker_cluster_068a19db55fff517fc10f8b0521e1bd5 = L.markerClusterGroup(
+                {
+}
+            );
+        
+    
+            var marker_05778508791f198eeb00560ba44ed2b1 = L.marker(
+                [45.35540055, -75.92789443706141],
+                {
+}
+            ).addTo(marker_cluster_068a19db55fff517fc10f8b0521e1bd5);
+        
+    
+            var icon_e3556e96f685c5cd66f970683cd2566d = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_5ad97361ac000151ef37c931ecbfe1cd = L.popup({
+  "maxWidth": 350,
+});
+
+        
+            
+                var html_219c8598eea0f52bebb78b14cef098f4 = $(`<div id="html_219c8598eea0f52bebb78b14cef098f4" style="width: 100.0%; height: 100.0%;">     <b>126, Attwell Private, Kanata, Kanata North, Ottawa, Eastern Ontario, Ontario, K2K 0H9, Canada</b><br>     <b>Affordability:</b> Expensive<br>     <b>Sale Price:</b> $771,266<br>     <b>Build Year:</b> Approx 1992<br>     <b>School Rating:</b> 8.2/10<br>     <b>Walk Score:</b> 78/100<br>     <b>Commute Time:</b> 25.9 min<br>     <b>Crime Risk:</b> Low     </div>`)[0];
+                popup_5ad97361ac000151ef37c931ecbfe1cd.setContent(html_219c8598eea0f52bebb78b14cef098f4);
+            
+        
+
+        marker_05778508791f198eeb00560ba44ed2b1.bindPopup(popup_5ad97361ac000151ef37c931ecbfe1cd)
+        ;
+
+        
+    
+    
+                marker_05778508791f198eeb00560ba44ed2b1.setIcon(icon_e3556e96f685c5cd66f970683cd2566d);
+            
+    
+            marker_cluster_068a19db55fff517fc10f8b0521e1bd5.addTo(map_39dd3641973b0ff6f81f226394af9889);
+        
+</script>
+</html>
