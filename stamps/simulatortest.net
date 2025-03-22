@@ -1,0 +1,64 @@
+* Even More Complex Circuit Netlist for SimulatorV6 (Revised)
+* This netlist is designed to fully exercise the simulator’s features.
+* It includes a mix of linear elements (resistors, capacitors, inductors),
+* independent sources, dependent sources (VCCS, VCVS, CCCS, CCVS),
+* and nonlinear devices (diodes, BJTs, NMOS transistors) with two different models
+* for diodes, BJTs, and MOSFETs.
+*
+* Model Definitions:
+.model D1 D IS=1e-14 Vt=0.0259
+.model D2 D IS=2e-14 Vt=0.0259
+.model Q1 NPN IS=1e-15 ALPHA_F=0.98
+.model Q2 NPN IS=2e-15 ALPHA_F=0.95
+.model M1 NMOS VTH=0.7 K=1e-3
+.model M2 NMOS VTH=0.8 K=2e-3
+
+* Linear Elements:
+R1 1 2 1k           * Resistor between node1 and node2 (1 kΩ)
+R2 2 3 2k           * Resistor between node2 and node3 (2 kΩ)
+R3 3 0 1.5k         * Resistor between node3 and ground (1.5 kΩ)
+R4 1 4 1k           * Resistor between node1 and node4 (1 kΩ)
+R5 4 0 2k           * Resistor between node4 and ground (2 kΩ)
+R6 2 5 1.2k         * Resistor between node2 and node5 (1.2 kΩ)
+R7 5 0 2.5k         * Resistor between node5 and ground (2.5 kΩ)
+R8 3 6 500          * Resistor between node3 and node6 (500 Ω)
+R9 6 0 1k           * Resistor between node6 and ground (1 kΩ)
+
+* Additional interconnections:
+R10 8 9 1k         * Resistor between node8 and node9 (1 kΩ)
+R11 7 10 1.2k      * Resistor between node7 and node10 (1.2 kΩ)
+
+* High-Value Tie Resistors (to ensure all nodes have a DC path to ground)
+R12 7 0 1G         * Tie node 7 to ground (1 GΩ)
+R13 8 0 1G         * Tie node 8 to ground (1 GΩ)
+R14 9 0 1G         * Tie node 9 to ground (1 GΩ)
+R15 10 0 1G        * Tie node 10 to ground (1 GΩ)
+
+* Capacitors:
+C1 2 0 1e-6         * Capacitor from node2 to ground (1 µF)
+C2 3 0 2e-6         * Capacitor from node3 to ground (2 µF)
+C3 4 0 1.5e-6       * Capacitor from node4 to ground (1.5 µF)
+
+* Inductors:
+L1 1 0 1e-3         * Inductor from node1 to ground (1 mH)
+L2 5 0 2e-3         * Inductor from node5 to ground (2 mH)
+
+* Independent Sources:
+V1 1 0 12           * Voltage source at node1 (12 V) - also used as controlling branch for dependent sources
+I1 2 0 0.005        * Current source at node2 (5 mA)
+
+* Dependent Sources:
+G1 4 0 2 0 0.002    * VCCS: current output between node4 and ground, controlled from node2 to ground, gm=2e-3
+E1 5 0 3 0 8        * VCVS: voltage output at node5 (relative to ground) controlled from node3 to ground, gain=8
+F1 6 0 V1 1.5       * CCCS: current-controlled current source between node6 and ground, controlled by branch V1, gain=1.5
+H1 7 0 V1 40        * CCVS: voltage-controlled voltage source between node7 and ground, controlled by branch V1, transresistance=40
+
+* Nonlinear Devices:
+D1 2 3 D1          * Diode between node2 and node3 using model D1
+D2 5 6 D2          * Diode between node5 and node6 using model D2
+Q1 8 4 0 Q1        * NPN BJT: collector at node8, base at node4, emitter at ground, using model Q1
+Q2 7 2 0 Q2        * NPN BJT: collector at node7, base at node2, emitter at ground, using model Q2
+M1 9 1 0 M1        * NMOS: drain at node9, gate at node1, source at ground, using model M1
+M2 10 4 0 M2       * NMOS: drain at node10, gate at node4, source at ground, using model M2
+
+.end
