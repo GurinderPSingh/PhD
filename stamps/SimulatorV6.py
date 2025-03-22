@@ -3,6 +3,7 @@ import time
 import math
 import sys
 import os
+import re
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 
@@ -17,6 +18,41 @@ from tkinter import filedialog
 # --- For iterative and sparse solvers ---
 from scipy.sparse import csr_matrix
 from scipy.sparse.linalg import cg, gmres, bicgstab, minres, spilu, spsolve, LinearOperator
+
+#######################################
+## pasrsing function to get simulator understand that k is 1000 and M is 1000000 etc.
+#####################################################
+import re
+
+def parse_value(val_str):
+    """
+    Parse a string representing an engineering value into a float.
+    Supports scientific notation (e.g., '1e-6') and engineering suffixes (e.g., '1k').
+    """
+    # This regex captures the numeric part (which may include an exponent)
+    # and the suffix (if any) separately.
+    match = re.match(r'^([-+]?[0-9]*\.?[0-9]+(?:[eE][-+]?[0-9]+)?)([a-zA-Z]*)', val_str.strip())
+    if not match:
+        raise ValueError(f"Cannot parse value: {val_str}")
+    num, suffix = match.groups()
+    # Define multipliers for common engineering suffixes.
+    multipliers = {
+        'T': 1e12,
+        'G': 1e9,
+        'MEG': 1e6,
+        'K': 1e3,
+        '': 1,
+        'M': 1e-3,   # Lowercase 'm' is often milli.
+        'U': 1e-6,
+        'N': 1e-9,
+        'P': 1e-12,
+    }
+    suffix = suffix.upper()
+    multiplier = multipliers.get(suffix, 1)
+    return float(num) * multiplier
+
+
+
 
 ###############################################################################
 # STEP 1: TKINTER FILE-DIALOG TO PICK NETLIST
@@ -60,31 +96,31 @@ def parse_netlist(netlist_file):
                 elem_name = parts[0]
                 elem_type = elem_name[0].upper()
                 if elem_type == "R":
-                    elements.append({"type": "R", "name": elem_name, "n1": int(parts[1]), "n2": int(parts[2]), "value": float(parts[3])})
+                    elements.append({"type": "R", "name": elem_name, "n1": int(parts[1]), "n2": int(parts[2]), "value": parse_value(parts[3])})
                 elif elem_type == "C":
-                    elements.append({"type": "C", "name": elem_name, "n1": int(parts[1]), "n2": int(parts[2]), "value": float(parts[3])})
+                    elements.append({"type": "C", "name": elem_name, "n1": int(parts[1]), "n2": int(parts[2]), "value": parse_value(parts[3])})
                 elif elem_type == "L":
-                    elements.append({"type": "L", "name": elem_name, "n1": int(parts[1]), "n2": int(parts[2]), "value": float(parts[3])})
+                    elements.append({"type": "L", "name": elem_name, "n1": int(parts[1]), "n2": int(parts[2]), "value": parse_value(parts[3])})
                 elif elem_type == "V":
-                    elements.append({"type": "V", "name": elem_name, "n1": int(parts[1]), "n2": int(parts[2]), "value": float(parts[3])})
+                    elements.append({"type": "V", "name": elem_name, "n1": int(parts[1]), "n2": int(parts[2]), "value": parse_value(parts[3])})
                 elif elem_type == "I":
-                    elements.append({"type": "I", "name": elem_name, "n1": int(parts[1]), "n2": int(parts[2]), "value": float(parts[3])})
+                    elements.append({"type": "I", "name": elem_name, "n1": int(parts[1]), "n2": int(parts[2]), "value": parse_value(parts[3])})
                 elif elem_type == "G":
                     elements.append({"type": "VCCS", "name": elem_name,
                                      "n_out_p": int(parts[1]), "n_out_m": int(parts[2]),
-                                     "n_in_p": int(parts[3]), "n_in_m": int(parts[4]), "gm": float(parts[5])})
+                                     "n_in_p": int(parts[3]), "n_in_m": int(parts[4]), "gm": parse_value(parts[5])})
                 elif elem_type == "E":
                     elements.append({"type": "VCVS", "name": elem_name,
                                      "n_out_p": int(parts[1]), "n_out_m": int(parts[2]),
-                                     "n_in_p": int(parts[3]), "n_in_m": int(parts[4]), "gain": float(parts[5])})
+                                     "n_in_p": int(parts[3]), "n_in_m": int(parts[4]), "gain": parse_value(parts[5])})
                 elif elem_type == "F":
                     elements.append({"type": "CCCS", "name": elem_name,
                                      "n_out_p": int(parts[1]), "n_out_m": int(parts[2]),
-                                     "branch_name": parts[3], "gain": float(parts[4])})
+                                     "branch_name": parts[3], "gain": parse_value(parts[4])})
                 elif elem_type == "H":
                     elements.append({"type": "CCVS", "name": elem_name,
                                      "n_out_p": int(parts[1]), "n_out_m": int(parts[2]),
-                                     "branch_name": parts[3], "transres": float(parts[4])})
+                                     "branch_name": parts[3], "transres": parse_value(parts[4])})
                 elif elem_type == "D":
                     elements.append({"type": "D", "name": elem_name,
                                      "n_p": int(parts[1]), "n_m": int(parts[2]), "model": parts[3]})
@@ -697,13 +733,61 @@ if __name__ == "__main__":
         RHS_dc = np.zeros(num_nodes, dtype=complex)
         unknowns_dc = [f"V{i}" for i in range(1, num_nodes+1)]
         from copy import deepcopy
+        # Stamp DC elements
         G_dc, RHS_dc, unknowns_dc = stamp_dc_elements(elements, G_dc, RHS_dc, unknowns_dc)
+
+        # Solve DC
         x_dc = np.linalg.solve(G_dc, RHS_dc)
+
+
+        # Write DC results to CSV
         with open("dc_solution.csv", "w") as f_out:
             f_out.write("Unknown,Voltage\n")
             for i, val in enumerate(x_dc):
                 f_out.write(f"{unknowns_dc[i]},{val.real}\n")
         print("DC solution saved to dc_solution.csv")
+        ##########################################################################
+        # BEGIN DC DEBUG PDF SECTION
+        ##########################################################################
+        debug_dc = True  # Set this to False if you don't want the debug PDF
+        if debug_dc:
+            # Build a text page showing the DC matrices and RHS
+            page_text = "=== DC Analysis Debug Info ===\n\n"
+            page_text += "Unknowns:\n" + "\n".join(unknowns_dc) + "\n\n"
+
+            page_text += matrix_to_string(G_dc, "G_dc (Conductance Matrix)")
+            # If you want to see how C and L were at DC, you can define them and stamp them as zeros or skip them:
+            # page_text += matrix_to_string(C_dc, "C_dc (Unused in DC)")
+            # page_text += matrix_to_string(L_dc, "L_dc (Unused in DC)")
+            page_text += vector_to_string(RHS_dc, "RHS_dc")
+
+            # Optionally show M = G + sC + sL for a debug frequency:
+            # f_debug = 1e3
+            # s_debug = 1j * 2 * np.pi * f_debug
+            # M_debug = G_dc + s_debug*C_dc + s_debug*L_dc
+            # page_text += matrix_to_string(M_debug, f"M_debug at {f_debug} Hz")
+
+            with PdfPages("dc_debug_and_flops.pdf") as pdfd:
+                fig_debug = make_text_page(page_text, "DC Debug Matrices")
+                pdfd.savefig(fig_debug)
+                plt.close(fig_debug)
+
+            # Optionally, plot a bar chart of node voltages for a quick look
+            plt.figure()
+            plt.bar(range(len(x_dc)), [val.real for val in x_dc])
+            plt.xlabel("Index (Node or Branch)")
+            plt.ylabel("Voltage (V)")
+            plt.title("DC Operating Point")
+            plt.grid(True)
+            plt.savefig("dc_plot_results.pdf")
+            plt.close()
+            print("DC debug info saved to dc_debug_and_flops.pdf")
+            print("DC plot saved to dc_plot_results.pdf")
+            ##########################################################################
+            # END DC DEBUG PDF SECTION
+            ##########################################################################
+
+
     elif analysis_choice == "2":
         # AC Analysis
         print("\n--- Running AC Analysis ---")
