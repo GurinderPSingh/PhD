@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Astro-Vāstu House Analyzer</title>
+</head>
+<body>
+<h1>House Comparison Tool</h1>
+<form method="POST">
+    <label>How many houses to compare?</label>
+    <input type="number" name="num_houses" min="1" required><br><br>
+
+    <label>How many family members?</label>
+    <input type="number" name="num_members" min="1" required><br><br>
+
+    <label>Family Income ($):</label>
+    <input type="number" name="family_income" step="0.01" required><br><br>
+
+    <label>Interest Rate (%):</label>
+    <input type="number" name="interest_rate" step="0.01" required><br><br>
+
+    <label>Special Concern:</label>
+    <input type="text" name="special_concern" required><br><br>
+
+    <h2>House Details</h2>
+    <div id="houses"></div>
+
+    <h2>Family Details</h2>
+    <div id="family"></div>
+
+    <button type="submit">Analyze</button>
+</form>
+
+<script>
+    document.querySelector('input[name="num_houses"]').addEventListener('change', function() {
+        let num = this.value;
+        let housesDiv = document.getElementById("houses");
+        housesDiv.innerHTML = "";
+        for (let i = 0; i < num; i++) {
+            housesDiv.innerHTML += `
+                    <h3>House ${i+1}</h3>
+                    Address: <input type="text" name="address_${i}" required><br>
+                    Street: <input type="text" name="street_${i}" required><br>
+                    Postal Code: <input type="text" name="postal_code_${i}" required><br>
+                    City: <input type="text" name="city_${i}" required><br>
+                    Province: <input type="text" name="province_${i}" required><br>
+                    Country: <input type="text" name="country_${i}" required><br>
+                    Sale Price ($): <input type="number" name="sale_price_${i}" step="0.01" required><br>
+                    Link: <input type="url" name="link_${i}" required><br>
+                    Entrance Direction: <select name="entrance_${i}">
+                        <option value="N">North</option>
+                        <option value="NE">Northeast</option>
+                        <option value="E">East</option>
+                        <option value="SE">Southeast</option>
+                        <option value="S">South</option>
+                        <option value="SW">Southwest</option>
+                        <option value="W">West</option>
+                        <option value="NW">Northwest</option>
+                    </select><br>
+                    Kitchen Location: <select name="kitchen_loc_${i}">
+                        <option value="NE">Northeast</option>
+                        <option value="SE">Southeast</option>
+                        <option value="SW">Southwest</option>
+                        <option value="NW">Northwest</option>
+                    </select><br>
+                    Stove Facing: <select name="stove_facing_${i}">
+                        <option value="N">North</option>
+                        <option value="E">East</option>
+                        <option value="S">South</option>
+                        <option value="W">West</option>
+                    </select><br>
+                    Sink Location: <select name="sink_loc_${i}">
+                        <option value="NE">Northeast</option>
+                        <option value="N">North</option>
+                        <option value="SW">Southwest</option>
+                        <option value="SE">Southeast</option>
+                    </select><br>
+                    Realtor Name (Optional): <input type="text" name="realtor_name_${i}"><br>
+                    Realtor DOB (Optional): <input type="date" name="realtor_dob_${i}"><br>
+                    Realtor TOB (Optional): <input type="time" name="realtor_tob_${i}"><br>
+                    Realtor City (Optional): <input type="text" name="realtor_city_${i}"><br><br>
+                `;
+        }
+    });
+
+    document.querySelector('input[name="num_members"]').addEventListener('change', function() {
+        let num = this.value;
+        let familyDiv = document.getElementById("family");
+        familyDiv.innerHTML = "";
+        for (let i = 0; i < num; i++) {
+            familyDiv.innerHTML += `
+                    <h3>Member ${i+1}</h3>
+                    Name: <input type="text" name="member_name_${i}" required><br>
+                    Date of Birth: <input type="date" name="member_dob_${i}" required><br>
+                    Time of Birth: <input type="time" name="member_tob_${i}" required><br>
+                    Birth City: <input type="text" name="member_birth_city_${i}" required><br>
+                    Current City: <input type="text" name="member_current_city_${i}" required><br><br>
+                `;
+        }
+    });
+</script>
+</body>
+</html>
