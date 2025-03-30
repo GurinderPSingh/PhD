@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Analysis Results</title>
+</head>
+<body>
+<h1>House Comparison Results</h1>
+<p>Family Income: ${{ income }} | Interest Rate: {{ rate }}% | Special Concern: {{ results[0].special_concern }}</p>
+{% for result in results %}
+<h2>{{ result.house.address }}, {{ result.house.street }}, {{ result.house.postal_code }}</h2>
+<p>Link: <a href="{{ result.house.link }}">{{ result.house.link }}</a></p>
+<p>Sale Price: ${{ result.house.sale_price }}</p>
+<p>Vāstu Score: {{ result.vastu_score }}/100</p>
+<h3>Family Impact (Based on Natal and Transits)</h3>
+{% for member in result.family_impact %}
+<p>{{ member.name }} (Sun: {{ member.sun }} {{ member.sun_deg }}°, Moon: {{ member.moon }} {{ member.moon_deg }}°, Asc: {{ member.asc }})</p>
+<ul>
+    <li>Education: {{ member.education }}/10</li>
+    <li>Career: {{ member.career }}/10</li>
+    <li>Health: {{ member.health }}/10</li>
+    <li>Growth: {{ member.growth }}/10</li>
+    <li>Finance: {{ member.finance }}/10</li>
+</ul>
+{% endfor %}
+<h3>Recommendations</h3>
+<p>Offer Date: {{ result.offer_date }}</p>
+<p>Offer Price: ${{ result.offer_price }}</p>
+<p>Avoid Period: {{ result.avoid_period }}</p>
+{% endfor %}
+<a href="/">Back</a>
+</body>
+</html>
